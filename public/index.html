@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Norsys simple chat</title>
+        <link href="/css/chat.css" rel="stylesheet" />
+    </head>
+    <body>
+        <div id="connect">
+            <form id="connectForm">
+                <input type="text" id="inputName" />
+                <button>Join</button>
+            </form>
+        </div>
+        <div id="chat" class="hidden">
+            <ul id="messages"></ul>
+            <form id="form">
+                <input type="text" id="input" />
+                <button>Send</button>
+            </form>
+        </div>
+        <div id="connectRoom">
+            <form id="connectRoomForm">
+                <input type="text" id="inputRoomName" />
+                <button>Join Room</button>
+            </form>
+        </div>
+        <div id="room" class="hidden">
+            <h2 id="roomName"></h2>
+            <ul id="roomMessages"></ul>
+            <form id="roomForm">
+                <input type="text" id="roomInput" />
+                <button>Send</button>
+            </form>
+        </div>
+        
+        <script src="/js/jquery-2.1.0.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="/js/chat.js"></script>
+    </body>
+</html>

@@ -1,14 +1,47 @@
 $(function() {
 
     var socket = io.connect('http://localhost'),
-        inputName = $('#inputName'),
+        roomListMenu = $('#roomList').find('a'),
         inputRoomName = $('#inputRoomName'),
-        input = $('#input'),
-        roomInput = $('#roomInput');;
+        roomInput = $('#roomInput');
+    
+    // Join the chat
+    $('#joinChatForm').submit(function(event) {
+        var nicknameEl = $('#nicknameField'),
+            nickname = nicknameEl.val();
+
+        event.preventDefault();
+        socket.emit('join', nickname);
+
+        // Reset the input
+        nicknameEl.val('');
+        // Hide the nickname input
+        $('#joinChatForm').addClass('hidden');
+        // Show the chat
+        $('#chat').removeClass('hidden');
+        roomListMenu.removeClass('hidden');
+        // Display the nickname of the user
+        $('#nickname').text(nickname);
+        $('#nickname').removeClass('hidden');
+    });
+    
+    // Send a message
+    $('#sendMessageForm').submit(function(event) {
+        var messageEl = $('#inputText'),
+            message = messageEl.val();
+
+        event.preventDefault();
+        addMessage('Me', message);
+        socket.emit('text', message);
+
+        // Reset the message input
+        messageEl.val('');
+        messageEl.focus();
+    });
 
     // Display a message
-    function addMessage(from, text) {
-        $('<li class="message"><span class="author">' + from + '</span>: ' + text + '</li>')
+    function addMessage(author, message) {
+        $('<li class="message"><strong>' + author + ':</strong> ' + message + '</li>')
         .appendTo('#messages');
     }
     
@@ -20,23 +53,9 @@ $(function() {
 
     // Display chat news
     function addAnnouncement(text) {
-        $('<li class="announcement">' + text + '</li>')
+        $('<li class="announcement"><em>' + text + '</em></li>')
         .appendTo('#messages');
     }
-
-    // Handle the connect submit
-    $('#connectForm').submit(function(event) {
-        var name = inputName.val();
-
-        event.preventDefault();
-        socket.emit('join', name);
-
-        // reset the input
-        inputName.val('');
-        $('#connect').addClass('hidden');
-        $('#chat').removeClass('hidden');
-
-    });
     
     // Handle the connect to room submit
     $('#connectRoomForm').submit(function(event) {
@@ -52,19 +71,6 @@ $(function() {
         $('#connectRoom').addClass('hidden');
         $('#room').removeClass('hidden');
 
-    });
-
-    // Handle the form submit
-    $('#form').submit(function(event) {
-        var msg = input.val();
-
-        event.preventDefault();
-        addMessage('Me', msg);
-        socket.emit('text', msg);
-
-        // reset the input
-        input.val('');
-        input.focus();
     });
     
     // Handle the form submit

@@ -1,39 +1,86 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
     <head>
-        <title>Norsys simple chat</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Node Simple Chat</title>
+
+        <!-- Bootstrap -->
+        <link href="/vendor/css/bootstrap.min.css" rel="stylesheet">
         <link href="/css/chat.css" rel="stylesheet" />
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
     </head>
     <body>
-        <div id="connect">
-            <form id="connectForm">
-                <input type="text" id="inputName" />
-                <button>Join</button>
-            </form>
-        </div>
+
+        <nav class="navbar navbar-default" role="navigation">
+            <div class="container-fluid">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">Simple Chat</a>
+                </div>
+                <ul class="nav navbar-nav" id="roomList">
+                    <li><a href="#" id="main" class="hidden">Main</a></li>
+                </ul>
+
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="navbar-collapse">
+                    <form id="joinChatForm" class="navbar-form navbar-left">
+                        <div class="form-group">
+                            <input id="nicknameField" type="text" class="form-control" placeholder="Nickname">
+                        </div>
+                        <button type="submit" class="btn btn-default">Join</button>
+                    </form>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="#" id="nickname" class="hidden"></a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
         <div id="chat" class="hidden">
+            
+            <form id="sendMessageForm" class="form-horizontal">
+                <div class="form-group">
+                <div class="col-sm-11">
+                    <input type="text" class="form-control" id="inputText" placeholder="Message">
+                </div>
+                <button type="submit" class="btn btn-default">Send</button>
+                </div>
+            </form>
+            
             <ul id="messages"></ul>
-            <form id="form">
-                <input type="text" id="input" />
-                <button>Send</button>
-            </form>
+
+            <div id="connectRoom">
+                <form id="connectRoomForm">
+                    <input type="text" id="inputRoomName" />
+                    <button>Join Room</button>
+                </form>
+            </div>
+            <div id="room" class="hidden">
+                <h2 id="roomName"></h2>
+                <ul id="roomMessages"></ul>
+                <form id="roomForm">
+                    <input type="text" id="roomInput" />
+                    <button>Send</button>
+                </form>
+            </div>
         </div>
-        <div id="connectRoom">
-            <form id="connectRoomForm">
-                <input type="text" id="inputRoomName" />
-                <button>Join Room</button>
-            </form>
-        </div>
-        <div id="room" class="hidden">
-            <h2 id="roomName"></h2>
-            <ul id="roomMessages"></ul>
-            <form id="roomForm">
-                <input type="text" id="roomInput" />
-                <button>Send</button>
-            </form>
-        </div>
-        
-        <script src="/js/jquery-2.1.0.js"></script>
+
+        <script src="/vendor/js/jquery-2.1.0.min.js"></script>
+        <script src="/vendor/js/bootstrap.min.js"></script>
         <script src="/socket.io/socket.io.js"></script>
         <script src="/js/chat.js"></script>
     </body>

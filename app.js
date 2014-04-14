@@ -38,6 +38,7 @@ io.sockets.on('connection', function (socket) {
     socket.on('join', function (name) {
         console.log(name + ' joined the chat');
         socket.nickname = name;
+        socket.rooms = [];
         if(name) {
             socket.broadcast.emit('announcement', name + ' joined the chat.');
         }
@@ -46,17 +47,18 @@ io.sockets.on('connection', function (socket) {
     socket.on('joinRoom', function (name) {
         console.log(socket.nickname + ' joined the room ' + name);
         console.log(io.sockets.manager.rooms);
-        socket.room = name;
+        socket.rooms.push(name);
+        console.log(socket.rooms);
         socket.join(name);
     });
 
-    socket.on('text', function (msg) {
-        socket.broadcast.emit('text', socket.nickname, msg);
-    });
-    
-    socket.on('roomMessage', function (msg) {
-        console.log(io.sockets.manager.rooms);
-        socket.broadcast.to(socket.room).emit('roomMessage', socket.nickname, msg);
+    socket.on('text', function (msg, room) {
+        if(room) {
+            socket.broadcast.to(room).emit('text', socket.nickname, msg);
+        } else {
+            socket.broadcast.emit('text', socket.nickname, msg);
+        }
+        
     });
 
     socket.on('disconnect', function () {

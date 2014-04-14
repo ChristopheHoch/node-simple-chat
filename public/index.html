@@ -31,18 +31,30 @@
                     </button>
                     <a class="navbar-brand" href="#">Simple Chat</a>
                 </div>
-                <ul class="nav navbar-nav" id="roomList">
-                    <li><a href="#" id="main" class="hidden">Main</a></li>
-                </ul>
 
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse" id="navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown" id="roomList">
+                            <a href="#" class="dropdown-toggle hidden" data-toggle="dropdown">Room list <b class="caret"></b></a>
+                            <ul class="dropdown-menu" id="roomListDropdown">
+                                <li><a href="#" id="main" class="active hidden">Main</a></li>
+                            </ul>
+                        </li>
+                    </ul>
                     <form id="joinChatForm" class="navbar-form navbar-left">
                         <div class="form-group">
                             <input id="nicknameField" type="text" class="form-control" placeholder="Nickname">
                         </div>
                         <button type="submit" class="btn btn-default">Join</button>
                     </form>
+                    <form id="joinChatRoomForm" class="navbar-form navbar-left hidden">
+                        <div class="form-group">
+                            <input id="roomField" type="text" class="form-control" placeholder="Room">
+                        </div>
+                        <button type="submit" class="btn btn-default">Join Room</button>
+                    </form>
+                    
                     <ul class="nav navbar-nav navbar-right">
                         <li><a href="#" id="nickname" class="hidden"></a></li>
                     </ul>
@@ -51,24 +63,20 @@
         </nav>
 
         <div id="chat" class="hidden">
-            
+
             <form id="sendMessageForm" class="form-horizontal">
                 <div class="form-group">
-                <div class="col-sm-11">
-                    <input type="text" class="form-control" id="inputText" placeholder="Message">
-                </div>
-                <button type="submit" class="btn btn-default">Send</button>
+                    <div class="col-sm-11">
+                        <input type="text" class="form-control" id="inputText" placeholder="Message">
+                    </div>
+                    <button type="submit" class="btn btn-default">Send</button>
                 </div>
             </form>
-            
-            <ul id="messages"></ul>
 
-            <div id="connectRoom">
-                <form id="connectRoomForm">
-                    <input type="text" id="inputRoomName" />
-                    <button>Join Room</button>
-                </form>
+            <div id="messages">
+                <ul id="messages_main"></ul>
             </div>
+
             <div id="room" class="hidden">
                 <h2 id="roomName"></h2>
                 <ul id="roomMessages"></ul>

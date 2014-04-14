@@ -1,9 +1,10 @@
+/* global $, io */
+
 $(function() {
+    "use strict";
 
     var socket = io.connect('http://localhost'),
-        roomListMenu = $('#roomList').find('a'),
-        inputRoomName = $('#inputRoomName'),
-        roomInput = $('#roomInput');
+        roomListMenu = $('#roomList a');
     
     // Join the chat
     $('#joinChatForm').submit(function(event) {
@@ -23,32 +24,85 @@ $(function() {
         // Display the nickname of the user
         $('#nickname').text(nickname);
         $('#nickname').removeClass('hidden');
+        $('#joinChatRoomForm').removeClass('hidden');
     });
     
     // Send a message
     $('#sendMessageForm').submit(function(event) {
         var messageEl = $('#inputText'),
-            message = messageEl.val();
+            message = messageEl.val(),
+            activeRoom = $('#roomListDropdown').find('.active');
 
         event.preventDefault();
         addMessage('Me', message);
-        socket.emit('text', message);
+        socket.emit('text', message, activeRoom.id);
 
         // Reset the message input
         messageEl.val('');
         messageEl.focus();
     });
+    
+    // Join a new room
+    $('#joinChatRoomForm').submit(function(event) {
+        var roomEl = $('#roomField'),
+            room = roomEl.val();
+
+        event.preventDefault();
+        socket.emit('joinRoom', room);
+
+        // Reset the input
+        roomEl.val('');
+        addNewRoom(room);
+    });
+    
+    $('#roomListDropdown').find('a').click(function(event) {
+        var roomName = this.id;
+        
+        event.preventDefault();
+        
+        changeRoom(roomName)
+    });
 
     // Display a message
-    function addMessage(author, message) {
-        $('<li class="message"><strong>' + author + ':</strong> ' + message + '</li>')
+    function addMessage(author, message, room) {
+        // If a room is defined then display on the correct room.
+        // Otherwise display the message on the main room.
+        var newMessage = $('<li class="message"><strong>' + author + ':</strong> ' + message + '</li>'),
+            roomName,
+            roomEl;
+        if(room) {
+            roomName = '#messages_' + room;
+            roomEl = $(roomName);
+            if(roomEl) {
+                newMessage.appendTo(roomEl);
+            }
+        } else {
+            newMessage.appendTo('#messages_main');
+        }
+        
+    }
+    
+     // Display a new room
+    function addNewRoom(room) {
+        $('<li><a href="#" id="' + room + '">' + room + '</a></li>')
+        .appendTo('#roomListDropdown');
+        
+        $('<ul id="messages_' + room + '"></ul>')
         .appendTo('#messages');
     }
     
-    // Display a room message
-    function addRoomMessage(from, text) {
-        $('<li class="message"><span class="author">' + from + '</span>: ' + text + '</li>')
-        .appendTo('#roomMessages');
+     // Change the active room
+    function changeRoom(room) {
+        var roomList = $('#roomListDropdown'),
+            activeRoom = roomList.find('.active'),
+            newActiveRoom = roomList.find('#room');
+        
+        if(newActiveRoom) {
+            newActiveRoom.addClass('active');
+        }
+        if(activeRoom) {
+            activeRoom.removeClass('active');
+        }
     }
 
     // Display chat news
@@ -56,41 +110,9 @@ $(function() {
         $('<li class="announcement"><em>' + text + '</em></li>')
         .appendTo('#messages');
     }
-    
-    // Handle the connect to room submit
-    $('#connectRoomForm').submit(function(event) {
-        var roomName = inputRoomName.val();
-
-        event.preventDefault();
-        socket.emit('joinRoom', roomName);
-
-        // reset the input
-        inputName.val('');
-        $('#roomName').text(roomName);
-        $('#roomMessages').empty();
-        $('#connectRoom').addClass('hidden');
-        $('#room').removeClass('hidden');
-
-    });
-    
-    // Handle the form submit
-    $('#roomForm').submit(function(event) {
-        var msg = roomInput.val();
-
-        event.preventDefault();
-        addRoomMessage('Me', msg);
-        socket.emit('roomMessage', msg);
-
-        // reset the input
-        roomInput.val('');
-        roomInput.focus();
-    });
 
     // Handle a new message
     socket.on('text', addMessage);
-    
-    // Handle new room message
-    socket.on('roomMessage', addRoomMessage);
 
     // Handle disconnection
     socket.on('left', addAnnouncement);

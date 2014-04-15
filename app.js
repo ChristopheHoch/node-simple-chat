@@ -50,12 +50,15 @@ io.sockets.on('connection', function (socket) {
         socket.rooms.push(name);
         console.log(socket.rooms);
         socket.join(name);
+        socket.broadcast.to(name).emit('roomAnnouncement', socket.nickname + ' joined the room.', name);
     });
 
     socket.on('text', function (msg, room) {
-        if(room) {
-            socket.broadcast.to(room).emit('text', socket.nickname, msg);
+        if(room && room !== 'main') {
+            console.log(socket.nickname + ' send the message "' + msg + '" to the room "' + room + '"');
+            socket.broadcast.to(room).emit('text', socket.nickname, msg, room);
         } else {
+            console.log(socket.nickname + ' send the message "' + msg + '" to all');
             socket.broadcast.emit('text', socket.nickname, msg);
         }
         

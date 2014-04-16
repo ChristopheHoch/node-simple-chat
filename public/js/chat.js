@@ -68,12 +68,10 @@ $(function() {
         // If a room is defined then display on the correct room.
         // Otherwise display the message on the main room.
         var newMessage = $('<p class="message"><strong>' + author + ':</strong> ' + message + '</p>'),
-            roomName,
             roomEl;
         
         if(room) {
-            roomName = '#messages_' + room;
-            roomEl = $(roomName);
+            roomEl = $('#messages_' + room);
             if(roomEl) {
                 newMessage.appendTo(roomEl);
             }
@@ -103,23 +101,23 @@ $(function() {
     // Change the active room
     function changeRoom(room) {
         var roomList = $('#roomListDropdown'),
-            activeRoom = roomList.find('.active'),
-            activeRoomName = activeRoom.find('a')[0].id,
-            newActiveRoom = roomList.find('#' + room).parent(),
             messages = $('#messages'),
-            activeRoomMessages = messages.find('#messages_' + activeRoomName),
-            newActiveRoomMessages = messages.find('#messages_' + room);
+            currentRoom = roomList.find('.active'),
+            currentRoomName = currentRoom.find('a')[0].id,
+            currentRoomMessages = messages.find('#messages_' + currentRoomName),
+            newRoom = roomList.find('#' + room).parent(),
+            newRoomMessages = messages.find('#messages_' + room);
 
-        if(newActiveRoom) {
-            newActiveRoom.addClass('active');
-            if(newActiveRoomMessages) {
-                newActiveRoomMessages.removeClass('hidden');
+        if(newRoom) {
+            newRoom.addClass('active');
+            if(newRoomMessages) {
+                newRoomMessages.removeClass('hidden');
             }
         }
-        if(activeRoom) {
-            activeRoom.removeClass('active');
-            if(activeRoomMessages) {
-                activeRoomMessages.addClass('hidden');
+        if(currentRoom) {
+            currentRoom.removeClass('active');
+            if(currentRoomMessages) {
+                currentRoomMessages.addClass('hidden');
             }
         }
     }

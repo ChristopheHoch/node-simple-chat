@@ -1,7 +1,6 @@
 
-/**
- * Module dependencies.
- */
+/* global require, process, __dirname, console */
+
 var express = require('express'),
     http = require('http'),
     path = require('path'),
@@ -34,6 +33,7 @@ server = http.createServer(app).listen(app.get('port'), function(){
 io = sio.listen(server);
 
 io.sockets.on('connection', function (socket) {
+    "use strict";
 
     socket.on('join', function (name) {
         console.log(name + ' joined the chat');
@@ -46,9 +46,7 @@ io.sockets.on('connection', function (socket) {
     
     socket.on('joinRoom', function (name) {
         console.log(socket.nickname + ' joined the room ' + name);
-        console.log(io.sockets.manager.rooms);
         socket.rooms.push(name);
-        console.log(socket.rooms);
         socket.join(name);
         socket.broadcast.to(name).emit('roomAnnouncement', socket.nickname + ' joined the room.', name);
     });
@@ -66,6 +64,7 @@ io.sockets.on('connection', function (socket) {
 
     socket.on('disconnect', function () {
         if(socket.nickname) {
+            console.log(socket.nickname + ' left the chat');
             socket.broadcast.emit('left', socket.nickname + ' has left the chat');
         }
     });

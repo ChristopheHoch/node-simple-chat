@@ -1,0 +1,176 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>node-simple-chat by ChristopheHoch</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>node-simple-chat</h1>
+        <p>  Simple chat créé avec Node.js et Socket.io</p>
+
+        <p class="view"><a href="https://github.com/ChristopheHoch/node-simple-chat">View the Project on GitHub <small>ChristopheHoch/node-simple-chat</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/ChristopheHoch/node-simple-chat/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/ChristopheHoch/node-simple-chat/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/ChristopheHoch/node-simple-chat">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a name="node-simple-chat" class="anchor" href="#node-simple-chat"><span class="octicon octicon-link"></span></a>node-simple-chat</h1>
+
+<p>Atelier organisé à <a href="http://www.norsys.fr/">Norsys</a> ayant pour but de créer une application de chat avec gestion de plusieurs salles en utilisant Node.js et Socket.io.</p>
+
+<h2>
+<a name="1-hello-express" class="anchor" href="#1-hello-express"><span class="octicon octicon-link"></span></a>1. Hello Express!</h2>
+
+<p>La première étape consiste à installer Express.js globalement sur le système puis de s'en servir pour générer un squelette d'application Node.js.</p>
+
+<pre><code>npm install -g express@3.4.8
+express simple-blog
+cd simple-blog
+npm install
+</code></pre>
+
+<p>Une fois ceci fait il suffit de lancer la commande suivant pour démarrer un serveur:</p>
+
+<pre><code>node app
+</code></pre>
+
+<p>Par défaut, Express est configuré pour utilisé le port 3000. L'application que vous venez de démarrer est accessible l'adresse suivante: <a href="http://localhost:3000">localhost:3000</a></p>
+
+<h3>
+<a name="11-red%C3%A9marrage-automatique-du-serveur" class="anchor" href="#11-red%C3%A9marrage-automatique-du-serveur"><span class="octicon octicon-link"></span></a>1.1. Redémarrage automatique du serveur</h3>
+
+<p>Un outil supplémentaire peut être installé pour surveiller tout changement dans les fichiers du projet et redémarrer automatiquement le serveur pour les appliquer.</p>
+
+<pre><code>npm install -g nodemon
+</code></pre>
+
+<p>Pour utiliser cet outil, il suffit de démarrer le serveur avec la ligne suivante:</p>
+
+<pre><code>nodemon app
+</code></pre>
+
+<h3>
+<a name="12-utilisez-express-en-mode-statique" class="anchor" href="#12-utilisez-express-en-mode-statique"><span class="octicon octicon-link"></span></a>1.2. Utilisez Express en mode statique</h3>
+
+<p>Pour cet atelier, nul besoin des fonctionalités complexes de template offertes par Express. Supprimez les lignes suivantes du code:</p>
+
+<pre><code>app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'jade');
+...
+app.use(app.router);
+...
+app.get('/', routes.index);
+app.get('/users', user.list);
+</code></pre>
+
+<p>Créez une page <em>index.html</em> simple que vous mettrez dans le dossier <em>public</em> de l'application.</p>
+
+<h2>
+<a name="2-connection-au-chat" class="anchor" href="#2-connection-au-chat"><span class="octicon octicon-link"></span></a>2. Connection au chat</h2>
+
+<p>Installez Socket.io comme indiqué dans <a href="http://socket.io/#how-to-use">la documentation</a> et utilisez la section <em>Using with the Express 3 framework</em> pour la configuration du serveur ainsi que du client. Notez que, pour ce qui est du client, le fichier <em>socket.io.js</em> n'est pas copié manuellement mais mis à la disposition automatiquement par la bibliothèque.</p>
+
+<p>Socket.io offre plusieurs fonctionnalités utiles à cet atelier:</p>
+
+<ul>
+<li>
+<code>socket.on(event, callback)</code>: écoute un évenement</li>
+<li>
+<code>socket.emit(event, data, callback)</code>: envois un évenement au client si côté serveur et au serveur si côté client</li>
+<li>
+<code>socket.broadcast.emit(event, data)</code>: envois un évenement à tous les clients enregistrés excepté celui actuellement traitée (utilisée côté serveur uniquement)</li>
+</ul><p>Pour cette première partie, nous allons simplement enregistrer les utilisateurs du chat auprés du serveur.</p>
+
+<ol>
+<li>
+<strong>[Client]</strong> Créez un formulaire de connection au chat permettant à un utilisateur de saisir son pseudonyme.</li>
+<li>
+<strong>[Client]</strong> Configurez la validation du formulaire pour envoyer au serveur un évenement <code>join</code> avec le pseudonyme de l'utilisateur en paramètre.</li>
+<li>
+<strong>[Serveur]</strong> Réceptionnez l'évenement <code>join</code>, enregistrez le pseudonyme du client dans la socket et écrivez un log dans la console.</li>
+</ol><h2>
+<a name="3-affichage-des-nouveaux-arrivants" class="anchor" href="#3-affichage-des-nouveaux-arrivants"><span class="octicon octicon-link"></span></a>3. Affichage des nouveaux arrivants</h2>
+
+<p>Lorsqu'un utilisateur se connecte, nous voulons envoyer un message à tous les autres utilisateurs pour l'annoncer.</p>
+
+<ol>
+<li>
+<strong>[Serveur]</strong> Emettez un broadcast d'un évenement <code>join</code> lors d'une connection avec le pseudonyme de nouvel arrivant.</li>
+<li>
+<strong>[Client]</strong> Ecoutez les évenements <code>join</code> et affichez sur la page <em>"XYZ s'est connecté au chat"</em>.</li>
+<li>
+<strong>[Bonus Client]</strong> Affichez la liste des utilisateurs connectés au chat.</li>
+</ol><h3>
+<a name="35-affichage-des-utilisateurs-connect%C3%A9s" class="anchor" href="#35-affichage-des-utilisateurs-connect%C3%A9s"><span class="octicon octicon-link"></span></a>3.5. Affichage des utilisateurs connectés</h3>
+
+<p>Afin de rendre l'utilisation du chat plus agréable, nous voulons afficher et maintenir la liste des utilisateurs connectés.</p>
+
+<ol>
+<li>
+<strong>[Client]</strong> Affichez la liste des utilisateurs connectés au chat</li>
+<li>
+<strong>[Serveur]</strong> Ecoutez les évenement <code>disconnect</code> et émettez un broadcast pour annoncer qu'un utilisateur s'est déconnecté</li>
+<li>
+<strong>[Bonus Client]</strong> Maintenez la liste des utilisateurs connectés à jour</li>
+</ol><h2>
+<a name="4-envoi-de-message" class="anchor" href="#4-envoi-de-message"><span class="octicon octicon-link"></span></a>4. Envoi de message</h2>
+
+<p>Développons maintenant la fonctionalité principale du chat. La mise en place est très similaire à la fonctionalité de connection.</p>
+
+<ol>
+<li>
+<strong>[Client]</strong> Créez un formulaire permettant d'envoyer un nouveau message. Configurez le pour emettre un évenement <code>text</code> avec le contenu du message puis affichez sur la page le message envoyé.</li>
+<li>
+<strong>[Serveur]</strong> Ecoutez les messages envoyés par le client et les transmettez aux autres clients.</li>
+<li>
+<strong>[Client]</strong> Ecoutez les messages des autres clients transmis par le serveur et affichez les sur la page.</li>
+</ol><h2>
+<a name="5-cr%C3%A9ation-dune-chatroom" class="anchor" href="#5-cr%C3%A9ation-dune-chatroom"><span class="octicon octicon-link"></span></a>5. Création d'une chatroom</h2>
+
+<p>Afin de discuter d'un sujet plus précis, nous voulons donner la possiblité aux clients de se connecter à une chatroom pour pouvoir discuter en plus petit commité.</p>
+
+<ol>
+<li>
+<strong>[Client]</strong> Créez un autre formulaire permettant d'entrer le nom d'une chatroom à laquelle se joindre. Comme d'habitude, configurez le pour emettre un évenement pour le serveur.</li>
+<li>
+<strong>[Serveur]</strong> Ecoutez le nouvel évenement créé et enregistrez l'information dans la socket du client. Emettez un évenement en broadcast à tous les autres clients connectés à la chatroom avec <code>socket.broadcast.to(room).emit()</code>.</li>
+<li>
+<strong>[Client]</strong> Ecoutez les nouvelles arrivées sur la chatroom et affichez les.</li>
+</ol><h2>
+<a name="6-envoi-de-message-%C3%A0-une-chatroom" class="anchor" href="#6-envoi-de-message-%C3%A0-une-chatroom"><span class="octicon octicon-link"></span></a>6. Envoi de message à une chatroom</h2>
+
+<p>Dernière étape, permettre l'échange de message sur une chatroom.</p>
+
+<ol>
+<li>
+<strong>[Client]</strong> Envoyez un message avec le nom de la salle en paramètre.</li>
+<li>
+<strong>[Serveur]</strong> Réceptionez les messages et transmettez les aux autres clients connectéés à la salle.</li>
+<li>
+<strong>[Client]</strong> Réceptionnez les messages envoyés sur la salle et affichez les.</li>
+</ol>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/ChristopheHoch">ChristopheHoch</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
